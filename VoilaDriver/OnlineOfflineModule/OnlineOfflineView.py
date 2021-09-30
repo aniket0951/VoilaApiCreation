@@ -6,6 +6,10 @@ from VoilaDriver.Common import APIResponses
 from VoilaDriver.LoginModule.DriverLoginModel import DriverInfo
 from VoilaDriver.OnlineOfflineModule.OnlineOfflineSerializer import OnlineOfflineSerializer
 from VoilaDriver.OnlineOfflineModule.OnlineOfflineModel import OnlineOfflineModel
+from VoilaDriver.Common.APIKey import MAPApiKey
+import requests
+from django.views.decorators.csrf import csrf_exempt
+from json.decoder import JSONDecoder
 
 
 def GoOnline(request):
@@ -84,3 +88,48 @@ def updateDriverLocation(request):
             return APIResponses.failure_result(False, "Location not updated successfully")
     else:
         return APIResponses.success_missing_data(False, "location")
+
+
+# --------- get all available vehicle in radius --------
+def CalculateDistanceOfVehicle(pickup_lat, pickup_lng, destination_lat, destination_lng):
+    apikey = MAPApiKey()
+    url = f"https://maps.googleapis.com/maps/api/directions/json?origin={pickup_lat}, {pickup_lng}&destination={destination_lat},  {destination_lng}&key={apikey}"
+    response = requests.get(url)
+    dec = json.loads(response.content.decode())
+    km = (dec['routes'][0]['legs'][0]['distance']['text'])
+    removeKm = km.removesuffix('km')
+    print(removeKm)
+    if int(float(removeKm)) <= 5:
+        return APIResponses.success_result(True, removeKm)
+    else:
+        return APIResponses.failure_result(False, "Greater than 20")
+
+
+@csrf_exempt
+def getAllAvailableVehicles(request):
+    pickup_lat = request.data.get('pickup_lat')
+    pickup_lng = request.data.get('pickup_lng')
+    destination_lat = request.data.get('destination_lat')
+    destination_lng = request.data.get('destination_lng')
+
+    return CalculateDistanceOfVehicle(pickup_lat, pickup_lng, destination_lat, destination_lng)
+
+
+@csrf_exempt
+def distanceBetweenDriverAndRider(pickup_lat, pickup_lng, destination_lat, destination_lng):
+    apikey = MAPApiKey()
+    url = f"https://maps.googleapis.com/maps/api/distancematrix/json?origins={pickup_lat}, {pickup_lng}&destinations={destination_lat},  {destination_lng}&mode=driving&language=it-IT&key={apikey}"
+    response = requests.get(url)
+    dec = json.loads(response.content.decode())
+    km = (dec['rows'][0]['elements'][0]['distance']['text'])
+    removeKm = km.removesuffix('km')
+    print(removeKm)
+    if int(removeKm) <= 20:
+        return APIResponses.success_result(True, removeKm)
+    else:
+        return APIResponses.failure_result(False, "Greater than 20")
+
+
+# -------- get all drivers in the radius --------------------
+def getAllDriverWithRadius(request):
+    return APIResponses.failure_result(False, "Get all drivers in the radius")
