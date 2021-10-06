@@ -1,5 +1,5 @@
 from VoilaRider.RiderLoginModule.RiderLoginModel import RiderLogin
-from VoilaRider.Rider.RiderModels import RiderTripLocation
+from VoilaRider.Rider.RiderModels import RiderTripLocation, NewTripAvailable
 
 
 # ------- login module -------------------------
@@ -10,3 +10,8 @@ def RiderLoginModel():
 # ---------- rider trip location module ------------
 def RiderTripLocationModel():
     return RiderTripLocation
+
+
+# -------- to create a new trip for driver ----------
+def NewTripAvailableModel():
+    return NewTripAvailable

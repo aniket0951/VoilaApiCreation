@@ -17,3 +17,13 @@ class DriverInfo(models.Model):
     firebase_token = models.CharField(max_length=120)
     driver_ratings = models.CharField(max_length=120)
     global_vehicle_id = models.CharField(max_length=120)
+
+
+# ------------------ driver rate card -------------------------------
+class DriverRateCard(models.Model):
+    driver_id = models.CharField(max_length=1200, null=True, blank=True)
+    min_rate = models.CharField(max_length=1200, null=True, blank=True)
+    max_rate = models.CharField(max_length=1200, null=True, blank=True)
+    system_rate = models.CharField(max_length=1200, null=True, blank=True)
+    canceled_trips = models.CharField(max_length=1200, null=True, blank=True)
+    canceled_trip_limit = models.CharField(max_length=1200, null=True, blank=True)

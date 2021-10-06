@@ -73,7 +73,7 @@ def isOldRider(request):
         return APIResponses.unauthorized_user()
 
     if RiderLogin.objects.filter(mobile_number=mobile_number).exists():
-        serializer = RiderLoginSerializer(rider, many=True)
+        serializer = RiderLoginSerializer(rider)
         return APIResponses.success_result_with_array(True, f"Welcome back{riderName}", "riderDetails", serializer.data)
 
 
@@ -90,8 +90,13 @@ def createNewRider(request):
                                              api_token=api_token, login_status=1)
 
         newRider.save()
-        riderInfo = RiderLogin.objects.all()
-        serializer = RiderLoginSerializer(riderInfo, many=True)
-        return APIResponses.success_result_with_data(True, "Your account is create successfully", "riderInfo", serializer.data)
+        try:
+            riderInfo = RiderLogin.objects.get(mobile_number=mobile_number)
+        except RiderLogin.DoesNotExist:
+            return APIResponses.failure_result("Failed to create a account")
+        serializer = RiderLoginSerializer(riderInfo)
+
+        return APIResponses.success_result_with_array(True, "Your account is create successfully", "riderInfo",
+                                                      serializer.data)
     else:
         return APIResponses.failure_result(False, "Failed to create a account")

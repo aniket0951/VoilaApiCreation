@@ -7,8 +7,6 @@ from VoilaRider.Rider.Serializers import RiderTripLocationSerializer
 
 
 # ---- find the driver --------------
-
-
 def findDriver(request):
     pickup_lat = request.data.get('pickup_lat')
     pickup_lng = request.data.get('pickup_lng')
@@ -45,3 +43,14 @@ def CreateNewRideToRider(request):
         return getAllAvailableVehicles(request)
     else:
         return APIResponses.failure_result(False, "Failed to trip saved")
+
+
+# ----------- get all driver of selected vehicle type --------------------
+def GetDriversByVehicleType(request):
+    global_vehicle_id = request.data.get('global_vehicle_id')
+    rider_id = request.data.get('rider_id')
+
+    if global_vehicle_id is not None and rider_id is not None:
+        return getAllDriverWithRadius(request)
+    else:
+        return APIResponses.failure_result(False, "No Drivers Available at this time please try again")

@@ -30,8 +30,14 @@ def createNewRiderAccount(request):
     return RiderLoginView.createNewRider(request)
 
 
-# ---------------- find the driver to ride ------------------
+# ---------------- find the vehicle to ride ------------------
+@api_view(['POST'])
+def FindVehicles(request):
+    if IsRiderRequestAuthenticate(request):
+        return RiderView.findDriver(request)
+
+
 @api_view(['POST'])
 def FindDriver(request):
     if IsRiderRequestAuthenticate(request):
-        return RiderView.findDriver(request)
+        return RiderView.GetDriversByVehicleType(request)

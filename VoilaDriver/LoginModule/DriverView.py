@@ -62,10 +62,14 @@ def verifyOtp(request):
 
 
 def isOldPartner(request):
-    mobile_number = request.data.get("mobile_number")
-    drivers = DriverInfo.objects.all()
-    if DriverInfo.objects.filter(phone_number=mobile_number).exists():
-        serializer = DriverInfoSerializer(drivers, many=True)
-        return APIResponses.success_result_with_data(True, "User found", "driverInfo", serializer.data)
+    phone_number = request.data.get("mobile_number")
+
+    if DriverInfo.objects.filter(phone_number=phone_number).exists():
+        try:
+            drivers = DriverInfo.objects.get(phone_number=phone_number)
+        except DriverInfo.DoesNotExist:
+            return APIResponses.unauthorized_user()
+        serializer = DriverInfoSerializer(drivers)
+        return APIResponses.success_result_with_array(True, "User found", "driverInfo", serializer.data)
     else:
         return APIResponses.unauthorized_user()
