@@ -10,6 +10,7 @@ class OnlineOfflineModel(models.Model):
     on_off_status = models.IntegerField(null=True, blank=True)
     driver_vehicle_type_id = models.IntegerField(null=True, blank=True)
     global_vehicle_id = models.IntegerField(null=True, blank=True)
+    is_busy = models.IntegerField(null=True, blank=True)
 
 
 # ------------ Trip Bidding -----------------

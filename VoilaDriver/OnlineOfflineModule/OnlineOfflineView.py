@@ -196,36 +196,39 @@ def CalculateDistanceOfVehicle(pickup_lat, pickup_lng, destination_lat, destinat
 
 
 # -------- get all drivers in the radius --------------------
+global result
+
+
 def getAllDriverWithRadius(request):
+    global result
     getRiderLatLng = RiderTripLocation.objects.filter(rider_id=request.data.get('rider_id'))
     serializer = RiderTripLocationSerializer(getRiderLatLng, many=True)
-    print(serializer.data[0]["pickup_lat"])
-    print(serializer.data[0]["pickup_address"])
 
     pickup_lat = serializer.data[0]["pickup_lat"]
     pickup_lng = serializer.data[0]["pickup_lng"]
 
     try:
-        driverLatLng = OnlineOfflineModel.objects.filter(global_vehicle_id=request.data.get("global_vehicle_id"))
+        driverLatLng = OnlineOfflineModel.objects.filter(global_vehicle_id=request.data.get("global_vehicle_id"),
+                                                         is_busy=0)
     except OnlineOfflineModel.DoesNotExist:
         return APIResponses.failure_result(False, "Oops currently no drivers available, please try again")
 
     driverSerializer = OnlineOfflineSerializer(driverLatLng, many=True)
-
     trip_id = get_random_string(30)
 
-    for item in driverSerializer.data:
-        item["radiusKm"] = CalculateDistanceOfVehicle(pickup_lat, pickup_lng, item["driver_current_latitude"],
-                                                      item["driver_current_longitude"], item["global_vehicle_id"])
-        # --- after getting distance driver to rider
-    for items in driverSerializer.data:
-        if items["radiusKm"] is not None and items["radiusKm"] != 0:
-            driver_id = items["driver_id"]
-            result = createNewTripToDriver(driver_id, serializer, request, trip_id)
-        else:
-            return APIResponses.failure_result(False, "Currently no drivers available")
+    drivers = driverSerializer.data
+    if drivers:
+        for item in driverSerializer.data:
+            item["radiusKm"] = CalculateDistanceOfVehicle(pickup_lat, pickup_lng, item["driver_current_latitude"],
+                                                          item["driver_current_longitude"], item["global_vehicle_id"])
+            # --- after getting distance driver to rider
+        for items in driverSerializer.data:
+            if items["radiusKm"] is not None and items["radiusKm"] != 0:
+                driver_id = items["driver_id"]
+                result = createNewTripToDriver(driver_id, serializer, request, trip_id)
+            else:
+                return APIResponses.failure_result(False, "Currently no drivers available")
 
-    if result:
         return APIResponses.success_result(True, "Please wait we are finding driver")
     else:
         return APIResponses.failure_result(False, "Currently no drivers available")
@@ -270,4 +273,3 @@ def isNewTripAvailable(request):
         return APIResponses.success_result_with_array(True, "Trip available", "tripData", serializer.data)
     else:
         return APIResponses.success_missing_data(False, "driver id")
-

@@ -2,7 +2,7 @@ from django.urls import path
 from django.urls import path
 from VoilaDriver.Common.APIKey import IsAuthenticated
 from VoilaDriver.views import sendOtpDriver, verifyDriverOtp, GoOnline, UpdateDriverLocation, IsNewTripAvailable, \
-    AcceptTripWithCurrentRate, AcceptTripWithRateCard, RefreshBiddingRates
+    AcceptTripWithCurrentRate, AcceptTripWithRateCard, RefreshBiddingRates, ApplyMinRate, CancelTrip
 
 urlpatterns = [
     path('send_otp', sendOtpDriver),
@@ -23,5 +23,12 @@ urlpatterns = [
     path('acceptTripWithRateCard', AcceptTripWithRateCard),
 
     #     -------- refresh the bidding rates -----
-    path('refreshBiddingRates', RefreshBiddingRates)
+    path('refreshBiddingRates', RefreshBiddingRates),
+
+    #     ------ apply min rate to current trip ----------
+    path('applyMinRate', ApplyMinRate),
+
+    #     ----- canceled the trip------
+
+    path('canceledTrip', CancelTrip)
 ]

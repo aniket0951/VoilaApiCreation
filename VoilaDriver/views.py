@@ -56,3 +56,17 @@ def AcceptTripWithRateCard(request):
 def RefreshBiddingRates(request):
     if IsAuthenticated(request):
         return TripDetails.refreshBiddingRates(request)
+
+
+# ----- apply a min rate to current trip --------
+@api_view(["POST"])
+def ApplyMinRate(request):
+    if IsAuthenticated(request):
+        return TripDetails.applyMinRate(request)
+
+
+# ---- canceled the trip or reject the trip----
+@api_view(["POST"])
+def CancelTrip(request):
+    if IsAuthenticated(request):
+        return TripDetails.canceledTrip(request)

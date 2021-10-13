@@ -1,7 +1,8 @@
 from django.urls import path
 from django.urls import path
 from VoilaDriver.Common.APIKey import IsAuthenticated
-from VoilaRider.views import sendOtpToRider, verifyOtp, createNewRiderAccount, FindVehicles, FindDriver
+from VoilaRider.views import sendOtpToRider, verifyOtp, createNewRiderAccount, FindVehicles, FindDriver, \
+    GetTripAcceptedDrivers, SelectDriver
 
 urlpatterns = [
     #    ----- send otp to and verify  rider --------------------
@@ -15,6 +16,11 @@ urlpatterns = [
     path('findVehicles', FindVehicles),
 
     #     -------- to find the driver after selecting the vehicle -----------
-    path('findDriver', FindDriver)
+    path('findDriver', FindDriver),
 
+    #     -------- to get the driver who accepted the trip -----------
+    path('getTripAcceptedDrivers', GetTripAcceptedDrivers),
+
+    #     ------ select driver to trip -------------
+    path('selectDriver', SelectDriver)
 ]

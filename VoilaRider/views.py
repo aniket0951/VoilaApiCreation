@@ -41,3 +41,17 @@ def FindVehicles(request):
 def FindDriver(request):
     if IsRiderRequestAuthenticate(request):
         return RiderView.GetDriversByVehicleType(request)
+
+
+# --------- Get All driver who accept the trip request ------
+@api_view(["POST"])
+def GetTripAcceptedDrivers(request):
+    if IsRiderRequestAuthenticate(request):
+        return RiderView.GetTripAcceptedDrivers(request)
+
+
+# ------ select driver to trip ------
+@api_view(["POST"])
+def SelectDriver(request):
+    if IsRiderRequestAuthenticate(request):
+        return RiderView.SelectDriver(request)
